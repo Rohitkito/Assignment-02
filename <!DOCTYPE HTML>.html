@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>JAVASCRIPT ASSIGNMENT-2</title>
+    <style>
+   
+
+.loadbutton{
+    height: 2rem;
+}
+
+#load{
+    display: inline;
+}
+#reload{
+    display: none;
+}
+
+button{
+    margin: auto;
+}
+table, th, td{
+    border: 1px solid rgb(51, 51, 51);
+}
+
+
+thead {
+    background-color: rgb(118, 173, 125);
+    color: rgb(11, 17, 13);
+}
+    </style>
+</head>
+<body>
+    <header></header>
+    
+    <main>
+       
+        <div id="parent">
+            <div class="load-button-container" style="flex-grow: 1;">
+                <div class="loadbutton">
+            
+                    <button onclick="loadData()" id="load">Load Data</button>
+                    <button onclick="reloadData()" id="reload">reload data</button>
+                </div>
+            </div>
+            <div class="table-container" style="flex-grow: 1;">
+                <div id="data">
+                    <table id="datatable">
+                        <thead>
+                            <tr>
+                                <th>Firstname</th>
+                                <th>Middlename</th>
+                                <th>Lastname</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Address</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        
+        
+    </main>
+
+    <footer></footer>
+    <script>
+     let data = [
+  {
+    firstName: "Rohit",
+    middleName: "kumar",
+    lastName: "kito",
+    email: "rohitkito46539@gmai.com",
+    phone: "8210822723",
+    role: "full stack",
+    address: "Bihar",
+    id: 1,
+  },
+  {
+    firstName: "sonu",
+    middleName: "kumar",
+    lastName: "yadav",
+    email: "sonukito82@gmail.com",
+    phone: "80836040467",
+    role: "student",
+    address: "Bihar",
+    id: 2,
+  },
+  {
+    firstName: "Amit",
+    middleName: "kumar",
+    lastName: "yadav",
+    email: "amit89@gmail.com",
+    phone: "7070332351",
+    role: "teacher",
+    address: "Bihar",
+    id: 3,
+  },
+  {
+    firstName: "bittu",
+    middleName: "kumar",
+    lastName: "yadav",
+    email: "bittu56@gmail.com",
+    phone: "8405570046",
+    role: "engg",
+    address: "Bihar",
+    id: 4,
+  },
+  {
+    firstName: "shiv",
+    middleName: "kumar",
+    lastName: "yadav",
+    email: "shiv89@gmail.com",
+    phone: "8405577846",
+    role: "cricket player",
+    address: "Bihar",
+    id: 5,
+  }
+];
+function loadData() {
+  const table = document.getElementById("datatable");
+  let rowCount = table.rows.length;
+
+  for (let employeeData of data) {
+    let row = table.insertRow(rowCount);
+    let cellNum = 0;
+    for (let j in employeeData) {
+      let newCell = row.insertCell(cellNum);
+      if (cellNum != 7) {
+        newCell.innerHTML = `<p class=\"info-row-${row.rowIndex}\">${employeeData[j]}</p>
+                                    <input type="text" class=\"edit-info-row-${row.rowIndex}\" name=\"${j}\" style="display:none" value=\"${employeeData[j]}\">`;
+        cellNum += 1;
+      } else {
+        newCell.innerHTML = `
+                              <div id=\"normal-action-${row.rowIndex}\">
+                                  <button id=\"del-row-${employeeData[j]}\" onclick=\"deleteRow(${row.rowIndex})\">Delete</button>
+                                  <button id=\"edit-row-${employeeData[j]}\" onclick=\"editRow(${row.rowIndex})\">Edit</button>
+                              </div>
+                              <div id=\"edit-action-${row.rowIndex}\" style=\"display:none\">
+                                  <button id=\"save-row-${employeeData[j]}\" onclick=\"save(${row.rowIndex})\">save</button>
+                                  <button id=\"cancel-row-${employeeData[j]}\" onclick=\"cancel(${row.rowIndex})\">cancel</button>
+                              </div>
+                              `;
+      }
+    }
+
+    rowCount++;
+  }
+  document.getElementById("reload").style.display = "inline";
+  document.getElementById("load").style.display = "none";
+}
+
+function save(n) {
+  let editableRowInput = document.getElementsByClassName(`edit-info-row-${n}`);
+  Array.from(editableRowInput).forEach((input) => {
+    data[n - 1][input.name] = input.value;
+  });
+  reloadData();
+}
+
+function cancel(n) {
+  let editableRowInput = document.getElementsByClassName(`edit-info-row-${n}`);
+  let staticCellData = document.getElementsByClassName(`info-row-${n}`);
+
+  Array.from(editableRowInput).forEach((input) => {
+    input.style.display = "none";
+  });
+  Array.from(staticCellData).forEach((input) => {
+    input.style.display = "inline";
+  });
+  document.getElementById(`normal-action-${n}`).style.display = "inline";
+  document.getElementById(`edit-action-${n}`).style.display = "none";
+}
+
+function editRow(n) {
+  let editableRowInput = document.getElementsByClassName(`edit-info-row-${n}`);
+  let staticCellData = document.getElementsByClassName(`info-row-${n}`);
+  Array.from(editableRowInput).forEach((input) => {
+    input.style.display = "inline";
+  });
+  Array.from(staticCellData).forEach((input) => {
+    input.style.display = "none";
+  });
+  document.getElementById(`normal-action-${n}`).style.display = "none";
+  document.getElementById(`edit-action-${n}`).style.display = "inline";
+}
+
+function deleteRow(n) {
+  data = [...data.slice(0, n - 1), ...data.slice(n)];
+  reloadData();
+}
+
+function reloadData() {
+  const table = document.getElementById("datatable");
+  let rowCount = table.rows.length;
+  for (let i = 1; i < rowCount; i++) {
+    table.deleteRow(1);
+  }
+  loadData();
+}
+    </script>
+</body>
+</html>
+
